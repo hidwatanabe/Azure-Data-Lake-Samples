@@ -1,0 +1,22 @@
+﻿// Cognitive 拡張読み込み
+REFERENCE ASSEMBLY ImageCommon;
+REFERENCE ASSEMBLY FaceSdk;
+
+// 顔認識クエリ
+@faces =
+    EXTRACT FileName string,   // ファイル名
+            NumFaces int,      // 認識した顔の数
+            FaceIndex int,     // 顔のインデックス番号
+            RectX float,       // 位置 (X 座標)
+            RectY float,       // 位置 (Y 座標)
+            Width float,       // 横幅
+            Height float,      // 高さ
+            FaceAge int,       // 年齢
+            FaceGender string  // 性別
+    FROM @"/images/{FileName}.jpg"
+    USING new Cognition.Vision.FaceDetectionExtractor();
+
+// 結果出力
+OUTPUT @faces
+TO "/output/face_result.tsv"
+USING Outputters.Tsv();

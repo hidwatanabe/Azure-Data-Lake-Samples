@@ -1,0 +1,22 @@
+﻿// Cognitive 拡張読み込み
+REFERENCE ASSEMBLY ImageCommon;      
+REFERENCE ASSEMBLY ImageEmotion;
+
+// 感情分析クエリ
+@emotions =
+    EXTRACT FileName string,   // ファイル名
+            NumFaces int,      // 認識した顔の数
+            FaceIndex int,     // 顔のインデックス番号
+            RectX float,       // 位置 (X 座標)
+            RectY float,       // 位置 (Y 座標)
+            Width float,       // 横幅
+            Height float,      // 高さ
+            Emotion string,    // 感情
+            Confidence float   // 信頼度
+    FROM @"/images/{FileName}.jpg"
+    USING new Cognition.Vision.EmotionExtractor();
+
+// 結果出力
+OUTPUT @emotions
+TO "/output/emotion_result.tsv"
+USING Outputters.Tsv();

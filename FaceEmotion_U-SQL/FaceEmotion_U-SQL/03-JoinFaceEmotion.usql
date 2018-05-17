@@ -1,0 +1,50 @@
+﻿// 顔認識結果読み込み
+@faces =
+    EXTRACT FileName string,
+            NumFaces int,
+            FaceIndex int,
+            RectX float,
+            RectY float,
+            Width float,
+            Height float,
+            FaceAge int,
+            FaceGender string
+    FROM "/output/face_result.tsv"
+    USING Extractors.Tsv();
+
+// 感情分析結果読み込み
+@emotions =
+    EXTRACT FileName string, 
+            NumFaces int, 
+            FaceIndex int, 
+            RectX float,
+            RectY float,
+            Width float,
+            Height float, 
+            Emotion string, 
+            Confidence float
+    FROM "/output/emotion_result.tsv"
+    USING Extractors.Tsv();
+
+// 結果を結合
+@result =
+    SELECT f.FileName,
+           f.FaceAge,
+           f.FaceGender,
+           f.NumFaces,
+           f.FaceIndex,
+           f.RectX,
+           f.RectY,
+           f.Width,
+           f.Height,
+           e.Emotion,
+           e.Confidence
+    FROM @faces AS f
+        INNER JOIN @emotions AS e
+        ON f.FileName == e.FileName AND f.FaceIndex == e.FaceIndex;
+
+// 結果を出力
+OUTPUT @result
+TO @outputPath
+ORDER BY FileName ASC
+USING Outputters.Tsv();
