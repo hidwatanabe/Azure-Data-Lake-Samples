@@ -1,0 +1,30 @@
+﻿@p1 =
+    SELECT new SQL.ARRAY<string>(path.Split('/')) AS paths, indate
+    FROM weblogs.ec.logs;
+
+@p2 =
+    SELECT paths[2] AS processing, indate
+    FROM @p1;
+
+@p3 =
+    SELECT processing, indate
+    FROM @p2
+    WHERE !processing.StartsWith("?");
+
+@p4 =
+    SELECT new SQL.ARRAY<string>(processing.Split('?')) AS categories, indate
+    FROM @p3;
+
+@p5 =
+    SELECT categories[0].Trim('"', ' ') AS category, indate
+    FROM @p4;
+
+@res =
+    SELECT category, COUNT(*) AS hits, indate.ToString("yyyy-MM-dd") AS indate
+    FROM @p5
+    GROUP BY category, indate;
+
+OUTPUT @res
+TO "/output/weblogs/category.tsv"
+ORDER BY hits DESC
+USING Outputters.Tsv(outputHeader: true);

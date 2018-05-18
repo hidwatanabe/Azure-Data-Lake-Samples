@@ -1,0 +1,11 @@
+﻿@p1 =
+    SELECT new SQL.ARRAY<string>(path.Split('/')) AS paths, indate
+    FROM weblogs.ec.logs;
+
+@p2 =
+    SELECT paths[2] AS processing, indate
+    FROM @p1;
+
+OUTPUT @p2
+TO "/outout/pi.csv"
+USING Outputters.Csv();

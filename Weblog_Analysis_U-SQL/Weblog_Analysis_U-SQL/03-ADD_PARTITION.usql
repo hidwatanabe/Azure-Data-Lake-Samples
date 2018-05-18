@@ -1,0 +1,8 @@
+﻿// Add partition
+DECLARE @partition1 DateTime = new DateTime(2018, 05, 11, 00,00,00,00, DateTimeKind.Utc);
+DECLARE @partition2 DateTime = new DateTime(2018, 05, 12, 00,00,00,00, DateTimeKind.Utc);
+DECLARE @partition3 DateTime = new DateTime(2018, 05, 13, 00,00,00,00, DateTimeKind.Utc);
+
+ALTER TABLE weblogs.ec.logs ADD PARTITION (@partition1);
+ALTER TABLE weblogs.ec.logs ADD PARTITION (@partition2);
+ALTER TABLE weblogs.ec.logs ADD PARTITION (@partition3);

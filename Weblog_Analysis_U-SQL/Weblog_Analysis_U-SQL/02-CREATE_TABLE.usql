@@ -1,0 +1,18 @@
+﻿USE DATABASE weblogs;
+
+CREATE SCHEMA IF NOT EXISTS ec;
+
+CREATE TABLE weblogs.ec.logs (
+	host string,
+	user string,
+	method string,
+	path string,
+	code string,
+	size int,
+	referer string,
+	agent string,
+	dt DateTime,
+    indate DateTime,
+INDEX idx_dt CLUSTERED (host))
+PARTITIONED BY (indate)
+DISTRIBUTED BY HASH(host);

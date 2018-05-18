@@ -1,0 +1,48 @@
+﻿REFERENCE ASSEMBLY [Newtonsoft.Json];
+REFERENCE ASSEMBLY [Microsoft.Analytics.Samples.Formats];
+
+@raw =
+    EXTRACT
+        jsonstring string
+    FROM "/weblogs/{*}/{*}"
+    USING Extractors.Tsv();
+
+@json =
+	SELECT
+		Microsoft.Analytics.Samples.Formats.Json.JsonFunctions.JsonTuple(jsonstring) AS j
+	FROM @raw;
+
+@columnized =
+    SELECT
+		j["host"] AS host,
+		j["user"] AS user,
+		j["method"] AS method,
+		j["path"] AS path,
+		j["code"] AS code,
+        (j["size"]==string.Empty ? 0: int.Parse(j["size"])) AS size,
+		j["referer"] AS referer,
+		j["agent"] AS agent,
+		DateTime.Parse(j["EventEnqueuedUtcTime"]).AddHours(9) AS dt
+	FROM @json;
+
+@result =
+	SELECT
+		*,
+		DateTime.Parse(dt.ToString("yyyy-MM-dd")) AS indate
+	FROM @columnized;
+
+INSERT INTO weblogs.ec.logs
+(
+    host,
+    user,
+    method,
+    path,
+    code,
+    size,
+    referer,
+    agent,
+    dt,
+    indate
+)
+ON INTEGRITY VIOLATION IGNORE
+SELECT * FROM @result;
