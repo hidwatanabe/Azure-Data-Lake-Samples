@@ -1,0 +1,36 @@
+﻿USE DATABASE nyctaxi;
+
+// trip テーブルと fare テーブルの作成
+CREATE TABLE dbo.trip (
+		medallion string,
+		hack_license string,
+		vendor_id string,
+		rate_code string,
+		store_and_fwd_flag string,
+		pickup_datetime DateTime,
+		dropoff_datetime DateTime,
+		passenger_count int,
+		trip_time_in_secs double,
+		trip_distance double,
+		pickup_longitude float,
+		pickup_latitude float,
+		dropoff_longitude float,
+		dropoff_latitude float,
+INDEX idx_medallion CLUSTERED (medallion))
+DISTRIBUTED BY HASH(medallion);
+
+
+CREATE TABLE dbo.fare (
+        medallion string,
+        hack_license string,
+        vendor_id string,
+        pickup_datetime DateTime,
+        payment_type string,
+        fare_amount float,
+        surcharge float,
+        mta_tax float,
+        tip_amount float,
+        tolls_amount float,
+        total_amount float,
+INDEX idx_medallion CLUSTERED (medallion))
+DISTRIBUTED BY HASH(medallion);

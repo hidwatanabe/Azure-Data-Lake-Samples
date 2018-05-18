@@ -1,0 +1,14 @@
+﻿// 乗車距離に関する基本的な統計情報
+@trip_summary =
+    SELECT 
+        vendor_id,
+        COUNT(*) AS cnt_row,
+        MIN(trip_distance) AS min_trip_distance,
+        MAX(trip_distance) AS max_trip_distance,
+        AVG(trip_distance) AS avg_trip_distance 
+    FROM nyctaxi.dbo.trip
+    GROUP BY vendor_id;
+
+OUTPUT @trip_summary
+TO "wasb://<your container>@<your storage account>.blob.core.windows.net/result/trip_sammary.csv"
+USING Outputters.Csv(outputHeader: true);

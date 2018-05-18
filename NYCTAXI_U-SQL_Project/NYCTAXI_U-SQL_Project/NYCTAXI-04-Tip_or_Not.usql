@@ -1,0 +1,15 @@
+﻿// チップが払われた乗車と払われなかった乗車の分布を調べる
+@tip_or_not =
+    SELECT *,
+           (tip_amount > 0 ? 1: 0) AS tipped
+    FROM nyctaxi.dbo.fare;
+
+@result =
+    SELECT tipped,
+           COUNT(*) AS tip_freq
+    FROM @tip_or_not
+    GROUP BY tipped;
+
+OUTPUT @result   
+TO "wasb://<your container>@<your storage account>.blob.core.windows.net/result/Tip_or_Not.csv"
+USING Outputters.Csv(outputHeader: true);

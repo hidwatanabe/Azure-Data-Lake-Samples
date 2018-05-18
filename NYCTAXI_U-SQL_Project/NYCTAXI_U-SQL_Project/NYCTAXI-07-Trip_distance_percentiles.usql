@@ -1,0 +1,11 @@
+﻿// 乗車距離のパーセンタイル
+@trip_percentiles =
+    SELECT DISTINCT vendor_id AS vendor,
+                    PERCENTILE_DISC(0.25) WITHIN GROUP(ORDER BY trip_distance) OVER(PARTITION BY vendor_id) AS median_trip_distance_disc_25,
+                    PERCENTILE_DISC(0.5) WITHIN GROUP(ORDER BY trip_distance) OVER(PARTITION BY vendor_id) AS median_trip_distance_disc_50,
+                    PERCENTILE_DISC(0.75) WITHIN GROUP(ORDER BY trip_distance) OVER(PARTITION BY vendor_id) AS median_trip_distance_disc_75
+    FROM nyctaxi.dbo.trip;
+
+OUTPUT @trip_percentiles
+TO "wasb://<your container>@<your storage account>.blob.core.windows.net/result/trip_percentiles.csv"
+USING Outputters.Csv(outputHeader: true);

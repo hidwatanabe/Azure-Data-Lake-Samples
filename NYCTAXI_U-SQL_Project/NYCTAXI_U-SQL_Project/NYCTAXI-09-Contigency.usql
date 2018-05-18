@@ -1,0 +1,13 @@
+﻿// 各レベルの乗客数について、レコード数、平均チップ金額、チップ金額の分散、チップが支払われた乗車の割合を計算
+@contigency =
+    SELECT passenger_count,
+           COUNT(*) AS cnt,
+           AVG(tip_amount) AS avg_tip_amount,
+           VAR(tip_amount) AS var_tip_amount,
+           SUM(tipped) AS cnt_tipped,
+           (float)SUM(tipped)/COUNT(*) AS pct_tipped
+    FROM nyctaxi.dbo.tripfare
+    GROUP BY passenger_count;
+    OUTPUT @contigency
+TO "wasb://<your container>@<your storage account>.blob.core.windows.net/result/contigency.csv"
+USING Outputters.Csv(outputHeader: true);

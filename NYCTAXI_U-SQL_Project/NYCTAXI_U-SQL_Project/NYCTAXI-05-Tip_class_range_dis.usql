@@ -1,0 +1,14 @@
+﻿// 0、5、10、および 20 ドルというカットオフ値でチップ金額の分布を調べる
+@tip_class =
+    SELECT *,
+           (tip_amount >20? 4: (tip_amount >10? 3:(tip_amount >5 ? 2:(tip_amount > 0 ? 1: 0)))) AS tip_class
+    FROM nyctaxi.dbo.fare;
+@result =
+    SELECT tip_class,
+           COUNT(*) AS tip_freq
+    FROM @tip_class
+    GROUP BY tip_class;
+
+OUTPUT @result   
+TO "wasb://<your container>@<your storage account>.blob.core.windows.net/result/tip_class.csv"
+USING Outputters.Csv(outputHeader : true);

@@ -1,0 +1,21 @@
+﻿// 乗車テーブルと料金テーブルの結合
+
+@model_data_full =
+    SELECT
+        t.*, 
+        f.payment_type, f.fare_amount, f.surcharge, f.mta_tax, f.tolls_amount,  f.total_amount, f.tip_amount,
+       (f.tip_amount > 0 ? 1: 0) AS tipped,
+       (f.tip_amount >20? 4: (f.tip_amount >10? 3:(f.tip_amount >5 ? 2:(f.tip_amount > 0 ? 1: 0)))) AS tip_class
+    FROM nyctaxi.dbo.trip AS t JOIN  nyctaxi.dbo.fare AS f
+    ON   (t.medallion == f.medallion AND t.hack_license == f.hack_license AND t.pickup_datetime == f.pickup_datetime)
+    WHERE   (pickup_longitude != 0 AND dropoff_longitude != 0 );
+
+//// output to blob
+OUTPUT @model_data_full   
+TO "wasb://<your container>@<your storage account>.blob.core.windows.net/result/full_data.csv"
+USING Outputters.Csv(outputHeader: true); 
+
+////output data to ADL
+OUTPUT @model_data_full   
+TO "/nyctaxi/full_data.csv"
+USING Outputters.Csv(outputHeader: true);

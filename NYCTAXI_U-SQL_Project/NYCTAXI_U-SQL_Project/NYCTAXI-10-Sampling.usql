@@ -1,0 +1,36 @@
+﻿//random select 1/1000 data for modeling purpose
+@addrownumberres_randomsample =
+    SELECT *,
+        ROW_NUMBER() OVER() AS rownum
+    FROM nyctaxi.dbo.tripfare;
+
+@model_data_random_sample_1_1000 =
+    SELECT *
+    FROM @addrownumberres_randomsample
+    WHERE rownum % 1000 == 0;
+
+OUTPUT @model_data_random_sample_1_1000   
+TO "wasb://<your container>@<your storage account>.blob.core.windows.net/result/demo_ex_7_random_1_1000.csv"
+USING Outputters.Csv(outputHeader: true);
+
+
+//stratified random select 1/1000 data for modeling purpose
+@addrownumberres_stratifiedsample =
+    SELECT *,
+        ROW_NUMBER() OVER(PARTITION BY tip_class) AS rownum
+    FROM nyctaxi.dbo.tripfare;
+
+@model_data_stratified_sample_1_1000 =
+    SELECT *
+    FROM @addrownumberres_stratifiedsample
+    WHERE rownum % 1000 == 0;
+
+//// output to blob
+OUTPUT @model_data_stratified_sample_1_1000   
+TO "wasb://<your container>@<your storage account>.blob.core.windows.net/result/demo_ex_9_stratified_1_1000.csv"
+USING Outputters.Csv(outputHeader: true); 
+
+////output data to ADL
+OUTPUT @model_data_stratified_sample_1_1000   
+TO "/nyctaxi/demo_ex_9_stratified_1_1000.csv"
+USING Outputters.Csv(outputHeader: true);

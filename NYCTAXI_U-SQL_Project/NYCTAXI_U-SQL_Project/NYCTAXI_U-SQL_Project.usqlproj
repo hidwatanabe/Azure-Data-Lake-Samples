@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>460b92a2-8055-43ad-ac86-2889f54a6368</ProjectGuid>
+    <OutputType>File</OutputType>
+    <AssemblyName>Algebra.xml</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <Name>NYCTAXI_U-SQL_Project</Name>
+    <RootNamespace>NYCTAXI_U-SQL_Project</RootNamespace>
+    <RuntimeVersion>default</RuntimeVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Script Include="NYCTAXI-01-CREATE_DATABASE.usql" />
+    <Script Include="NYCTAXI-10-Sampling.usql" />
+    <Script Include="NYCTAXI-06-Trip_distance_basic_statistics.usql" />
+    <Script Include="NYCTAXI-02-CREATE_TABLE.usql" />
+    <Script Include="NYCTAXI-03-INSERT_TABLE.usql" />
+    <Script Include="NYCTAXI-04-Tip_or_Not.usql" />
+    <Script Include="NYCTAXI-05-Tip_class_range_dis.usql" />
+    <Script Include="NYCTAXI-07-Trip_distance_percentiles.usql" />
+    <Script Include="NYCTAXI-08-Join_trip_fare.usql" />
+    <Script Include="NYCTAXI-09-Contigency.usql" />
+    <ScriptCode Include="NYCTAXI-01-CREATE_DATABASE.usql.cs">
+      <DependentUpon>NYCTAXI-01-CREATE_DATABASE.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-10-Sampling.usql.cs">
+      <DependentUpon>NYCTAXI-10-Sampling.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-06-Trip_distance_basic_statistics.usql.cs">
+      <DependentUpon>NYCTAXI-06-Trip_distance_basic_statistics.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-02-CREATE_TABLE.usql.cs">
+      <DependentUpon>NYCTAXI-02-CREATE_TABLE.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-03-INSERT_TABLE.usql.cs">
+      <DependentUpon>NYCTAXI-03-INSERT_TABLE.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-04-Tip_or_Not.usql.cs">
+      <DependentUpon>NYCTAXI-04-Tip_or_Not.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-05-Tip_class_range_dis.usql.cs">
+      <DependentUpon>NYCTAXI-05-Tip_class_range_dis.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-07-Trip_distance_percentiles.usql.cs">
+      <DependentUpon>NYCTAXI-07-Trip_distance_percentiles.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-08-Join_trip_fare.usql.cs">
+      <DependentUpon>NYCTAXI-08-Join_trip_fare.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="NYCTAXI-09-Contigency.usql.cs">
+      <DependentUpon>NYCTAXI-09-Contigency.usql</DependentUpon>
+    </ScriptCode>
+  </ItemGroup>
+  <!-- check for SDK Build target in current path then in USQLSDKPath in the case of command line build -->
+  <Import Project="UsqlSDKBuild.targets" Condition="'$(BuildingInsideVisualStudio)' != 'true' And  Exists('UsqlSDKBuild.targets')" />
+  <Import Project="$(USQLSDKPath)\UsqlSDKBuild.targets" Condition="'$(BuildingInsideVisualStudio)' != 'true' And !Exists('UsqlSDKBuild.targets') And '$(USQLSDKPath)' != '' And Exists('$(USQLSDKPath)\UsqlSDKBuild.targets')" />
+  <!-- backward compatible with IDE build -->
+  <Import Project="$(AppData)\Microsoft\DataLake\MsBuild\1.0\Usql.targets" Condition="'$(BuildingInsideVisualStudio)' == 'true'" />
+</Project>

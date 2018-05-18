@@ -1,0 +1,82 @@
+﻿// データのロード
+@trip0 =
+    EXTRACT
+		medallion string,
+		hack_license string,
+		vendor_id string,
+		rate_code string,
+		store_and_fwd_flag string,
+		pickup_datetime string,
+		dropoff_datetime string,
+		passenger_count string,
+		trip_time_in_secs string,
+		trip_distance string,
+		pickup_longitude string,
+		pickup_latitude string,
+		dropoff_longitude string,
+		dropoff_latitude string
+	FROM "wasb://<your container>@<your storage account>.blob.core.windows.net/nyctaxitrip/trip_data_{*}.csv"
+	USING Extractors.Csv();
+
+// データ型の変換
+@trip =
+    SELECT
+		medallion,
+		hack_license,
+		vendor_id,
+		rate_code,
+		store_and_fwd_flag,
+		DateTime.Parse(pickup_datetime) AS pickup_datetime,
+		DateTime.Parse(dropoff_datetime) AS dropoff_datetime,
+		Int32.Parse(passenger_count) AS passenger_count,
+		Double.Parse(trip_time_in_secs) AS trip_time_in_secs,
+		Double.Parse(trip_distance) AS trip_distance,
+		(pickup_longitude==string.Empty ? 0: float.Parse(pickup_longitude)) AS pickup_longitude,
+		(pickup_latitude==string.Empty ? 0: float.Parse(pickup_latitude)) AS pickup_latitude,
+		(dropoff_longitude==string.Empty ? 0: float.Parse(dropoff_longitude)) AS dropoff_longitude,
+		(dropoff_latitude==string.Empty ? 0: float.Parse(dropoff_latitude)) AS dropoff_latitude
+	FROM @trip0
+	WHERE medallion != "medallion";
+
+// テーブルインサート
+INSERT INTO nyctaxi.dbo.trip
+SELECT * FROM @trip;
+
+
+// データのロード
+@fare0 =
+	EXTRACT
+        medallion string,
+        hack_license string,
+        vendor_id string,
+        pickup_datetime string,
+        payment_type string,
+        fare_amount string,
+        surcharge string,
+        mta_tax string,
+        tip_amount string,
+        tolls_amount string,
+        total_amount string
+    FROM "wasb://<your container>@<your storage account>.blob.core.windows.net/nyctaxitrip/trip_fare_{*}.csv"
+    USING Extractors.Csv(silent: true);
+
+// データ型変換
+@fare =
+    SELECT
+        medallion,
+        hack_license,
+        vendor_id,
+        DateTime.Parse(pickup_datetime) AS pickup_datetime,
+        payment_type,
+        (fare_amount==string.Empty ? 0: float.Parse(fare_amount)) AS fare_amount,
+        (surcharge==string.Empty ? 0: float.Parse(surcharge)) AS surcharge,
+        (mta_tax==string.Empty ? 0: float.Parse(mta_tax)) AS mta_tax,
+        (tip_amount==string.Empty ? 0: float.Parse(tip_amount)) AS tip_amount,
+        (tolls_amount==string.Empty ? 0: float.Parse(tolls_amount)) AS tolls_amount,
+        (total_amount==string.Empty ? 0: float.Parse(total_amount)) AS total_amount
+    FROM @fare0
+    WHERE medallion != "medallion";
+
+// テーブルロード
+INSERT INTO nyctaxi.dbo.fare
+SELECT * FROM @fare;
