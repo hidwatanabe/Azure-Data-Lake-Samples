@@ -1,0 +1,27 @@
+﻿USE DATABASE extnyctaxi;
+
+/* 外部データソースにクエリを実行 ----------------------------------------------------------------- */
+@fare =
+    SELECT *	
+    FROM EXTERNAL sqldw_fare_ds LOCATION "dbo.fare"; // SQL Data Wahouse のスキーマとテーブル
+
+OUTPUT @fare
+    TO @"/output/sqldw_result.csv"
+    USING Outputters.Csv();
+/* ------------------------------------------------------------------------------------------------ */
+
+
+/* 外部データソースにクエリのプッシュダウン ------------------------------------------------------- */
+// T-SQL は環境に合わせて記述
+@result =
+    SELECT *
+    FROM EXTERNAL sqldw_fare_ds EXECUTE @"
+        SELECT 
+            SUM(CAST(tip_amount AS float)) AS total_tip_amount
+        FROM dbo.fare
+    ";
+
+OUTPUT @result
+TO "/output/tip_or_not_from_SQLDW.csv"
+USING Outputters.Tsv(outputHeader: true);
+/* ------------------------------------------------------------------------------------------------ */

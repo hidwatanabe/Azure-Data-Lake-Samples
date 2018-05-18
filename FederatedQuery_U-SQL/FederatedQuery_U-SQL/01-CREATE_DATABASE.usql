@@ -1,0 +1,17 @@
+﻿// データベース作成
+DROP TABLE IF EXISTS extnyctaxi;
+CREATE DATABASE extnyctaxi;
+
+/* Azure PowerShell で実行 ------------------------------------------------------------------
+// クレデンシャルを作成
+$username = "ユーザー名"
+$passwd = ConvertTo-SecureString "パスワード" -AsPlainText -Force // SQL Data Warehouse パスワード
+$creds = New-Object System.Management.Automation.PSCredential($username, $passwd)
+
+// Data Lake Analytics のデータベースにクレデンシャルを登録
+New-AzureRmDataLakeAnalyticsCatalogCredential -AccountName "ADLAアカウント名" `
+                  -DatabaseName "SQLDWのデータベース名" `
+                  -CredentialName "mycredential" `
+                  -Credential $creds `
+                  -DatabaseHost "データベースホスト名.database.windows.net" -Port 1433
+ここまで Azure PowerShell で実行 ------------------------------------------------------------------ */

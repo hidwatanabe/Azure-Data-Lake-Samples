@@ -1,0 +1,29 @@
+﻿USE DATABASE extnyctaxi;
+
+/* 外部テーブル作成 ------------------------------------------------------------------------------- */
+CREATE EXTERNAL TABLE IF NOT EXISTS sqldw_fare_extbl
+(
+    medallion string,
+    hack_license string,
+    vendor_id string,
+    pickup_datetime string,
+    payment_type string,
+    fare_amount string,
+    surcharge string,
+    mta_tax string,
+    tip_amount string,
+    tolls_amount string,
+    total_amount string
+)
+FROM sqldw_fare_ds LOCATION "[dbo].[fare]";
+/* ------------------------------------------------------------------------------------------------ */
+
+
+/* 外部テーブルにクエリ --------------------------------------------------------------------------- */
+@row =
+	SELECT * FROM sqldw_fare_extbl;
+
+OUTPUT @row
+TO "/output/sqldwfare.tsv"
+USING Outputters.Tsv(outputHeader : true);
+/* ------------------------------------------------------------------------------------------------ */

@@ -1,0 +1,13 @@
+﻿USE DATABASE extnyctaxi;
+
+/* Data Lake Analytics データベース上に外部データソースを定義 ------------------------------------- */
+// SQL Data Warehouse への接続定義
+CREATE DATA SOURCE IF NOT EXISTS sqldw_fare_ds
+FROM AZURESQLDW
+WITH
+(
+    PROVIDER_STRING = "Database=SQLDWのデータベース名;Trusted_Connection=False;Encrypt=True",
+    CREDENTIAL = mycredential,
+    REMOTABLE_TYPES = (bool, byte, sbyte, short, ushort, int, uint, long, ulong, decimal, float, double, string, DateTime)
+);
+/* ------------------------------------------------------------------------------------------------ */

@@ -1,0 +1,74 @@
+﻿/*
+Azure SQL Data Warehouse のデータに対して Federated Query を実行するサンプル
+サンプルを実行するにあたって、以下の準備を
+1. Azure SQL Data Warehouse のインスタンスを作成
+2. [dbo].[fare] テーブルを作成
+3. NYC Taxi Trips データの Fares をダウンロードしてテーブルに投入
+    http://www.andresmh.com/nyctaxitrips/
+
+
+※SQL Data Warehouse で PolyBase を使って fares データをロードするサンプル
+// クレデンシャルを作成
+CREATE MASTER KEY;
+
+CREATE DATABASE SCOPED CREDENTIAL mycredential
+WITH
+    IDENTITY = 'Blobストレージ赤カウント'
+,   Secret = 'Blobキー'
+;
+
+DROP EXTERNAL FILE FORMAT text_file_format;
+
+CREATE EXTERNAL FILE FORMAT text_file_format
+WITH
+(
+    FORMAT_TYPE = DELIMITEDTEXT
+,   FORMAT_OPTIONS  (
+                        FIELD_TERMINATOR ='\t',
+						STRING_DELIMITER = '"'
+                    )
+);
+
+
+--Creating an external data source
+CREATE EXTERNAL DATA SOURCE mystorage
+WITH
+(
+    TYPE = HADOOP
+,   LOCATION ='wasb://Blobコンテナ名@Blobアカウント名.blob.core.windows.net/'
+,   CREDENTIAL = mycredential
+)
+;
+
+DROP EXTERNAL TABLE extfare;
+
+-- Creating external table pointing to file stored in Azure Storage
+CREATE EXTERNAL TABLE extfare
+(
+    medallion varchar(128),
+    hack_license varchar(128),
+    vendor_id varchar(128),
+    pickup_datetime varchar(128),
+    payment_type varchar(128),
+    fare_amount varchar(10),
+    surcharge varchar(10),
+    mta_tax varchar(10),
+    tip_amount varchar(10),
+    tolls_amount varchar(10),
+    total_amount varchar(10)
+)
+WITH
+(   LOCATION='source'
+,   DATA_SOURCE = mystorage
+,   FILE_FORMAT = text_file_format
+);
+
+CREATE TABLE fare
+WITH
+( 
+    DISTRIBUTION = ROUND_ROBIN,
+    CLUSTERED COLUMNSTORE INDEX
+)
+AS SELECT * FROM dbo.extfare
+;
+*/
