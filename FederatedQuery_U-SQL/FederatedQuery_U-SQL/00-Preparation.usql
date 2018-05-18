@@ -1,6 +1,6 @@
 ﻿/*
 Azure SQL Data Warehouse のデータに対して Federated Query を実行するサンプル
-サンプルを実行するにあたって、以下の準備を
+サンプルを実行するにあたって、以下の準備が必要です
 1. Azure SQL Data Warehouse のインスタンスを作成
 2. [dbo].[fare] テーブルを作成
 3. NYC Taxi Trips データの Fares をダウンロードしてテーブルに投入
