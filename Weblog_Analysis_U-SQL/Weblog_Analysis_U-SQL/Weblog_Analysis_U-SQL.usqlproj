@@ -26,7 +26,6 @@
     <Script Include="03-ADD_PARTITION.usql" />
     <Script Include="04-INSERT_TABLE.usql" />
     <Script Include="05-Sum_by_Categoryusql.usql" />
-    <Script Include="Script1.usql" />
     <ScriptCode Include="01-CREATE_DATABASE.usql.cs">
       <DependentUpon>01-CREATE_DATABASE.usql</DependentUpon>
     </ScriptCode>
@@ -41,9 +40,6 @@
     </ScriptCode>
     <ScriptCode Include="05-Sum_by_Categoryusql.usql.cs">
       <DependentUpon>05-Sum_by_Categoryusql.usql</DependentUpon>
-    </ScriptCode>
-    <ScriptCode Include="Script1.usql.cs">
-      <DependentUpon>Script1.usql</DependentUpon>
     </ScriptCode>
   </ItemGroup>
   <!-- check for SDK Build target in current path then in USQLSDKPath in the case of command line build -->
